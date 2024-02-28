@@ -108,9 +108,87 @@ void city_map_generation(char numer_miasta, int n, int m, char map[][25])
 					}
 				}
 			}
-			else if ((map_height % 5 != 0 && map_width % 5 != 0) || map_height > m * 5 - 5 || map_width > m * 5 - 5)
+			else if ((map_height % 5 != 0 && map_width % 5 != 0) || map_height > m * 5 - 5 || map_width > n * 5 - 5)
 			{
 				map[map_height][map_width] = ' ';
+			}
+		}
+	}
+	int random_street; // losowa droga jedna z 4 opcji
+
+
+
+	// tu jescze jest duzo pracy skroce to tak tylko pogladowo ;))
+	for (int map_height = 0; map_height < m * 5; map_height++)
+	{
+		for (int map_width = 0; map_width < n * 5; map_width++)
+		{
+			if ((map_height == 0 || map_height % 5 == 0) && (map_width == 0 || map_width % 5 == 0))
+			{
+				if (map[map_height + 1][map_width] == ' ' && map[map_height][map_width + 1] == ' ' && map[map_height][map_width - 1] == ' ' && map[map_height - 1][map_width] == ' ')
+				{
+					random_street = rand() % 4;
+					
+					if (map_width == 0)
+					{
+						for (int i = 1;i < 5;i++)
+						{
+							map[map_height][map_width + i] = '-';
+						}
+					}
+					else if (map_width == n * 5 - 5)
+					{
+						for (int i = 1;i < 5;i++)
+						{
+							map[map_height][map_width - i] = '-';
+						}
+					}
+					else if (map_height == m * 5 - 5)
+					{
+						for (int i = 1;i < 5;i++)
+						{
+							map[map_height - i][map_width] = '|';
+						}
+					}
+					else if (map_height == 0)
+					{
+						for (int i = 1;i < 5;i++)
+						{
+							map[map_height + i][map_width] = '|';
+						}
+					}
+					else
+					{
+						if (random_street == 0)
+						{
+							for (int i = 1;i < 5;i++)
+							{
+								map[map_height][map_width + i] = '-';
+							}
+						}
+						else if (random_street == 1)
+						{
+							for (int i = 1;i < 5;i++)
+							{
+								map[map_height][map_width - i] = '-';
+							}
+						}
+						else if (random_street == 2)
+						{
+							for (int i = 1;i < 5;i++)
+							{
+								map[map_height - i][map_width] = '|';
+							}
+						}
+						else if (random_street == 3)
+						{
+							for (int i = 1;i < 5;i++)
+							{
+								map[map_height + i][map_width] = '|';
+							}
+						}
+					}
+				}
 			}
 		}
 	}
