@@ -2,23 +2,23 @@
 #include <iomanip>
 #include <string>
 #include <limits>
-
+#include <ctime>
 using namespace std;
 
 void start_screen();
 void clear_screen();
 void exit_program();
 //bool check_input(const int n, string type);
-void city_map_generation();
+void city_map_generation(char numer_miasta, int n, int m, char map[][25]);
 char get_valid_option(const char* valid_options);
 void clear_input_buffer();
 
 template<typename T>
-T check_input( T min_val ,T max_val) {
+T check_input(T min_val, T max_val) {
 	T input;
 	bool is_valid_input = false;
 	do {
-		
+
 		if (!(cin >> input)) {
 			cout << "Invalid input. Please try again." << endl;
 			clear_input_buffer();
@@ -39,44 +39,23 @@ T check_input( T min_val ,T max_val) {
 int main()
 {
 	start_screen();
-	const int choice = check_input<int>(1,2);
+	const int choice = check_input<int>(1, 2);
 	if (choice == 2)
 	{
 		exit_program();
 	}
 	else if (choice == 1)
 	{
-		string* city_map = nullptr; 
+		string* city_map = nullptr;
 		cout << "Wprowadz wymiary miasta:" << endl;
 		cout << "Szerokosc max. 31 : ";
-		int n = check_input<int>(1,31);
+		int n = check_input<int>(1, 31);
 		cout << "Wysokosc max. 31 : ";
-		int m = check_input<int>(1,31);
+		int m = check_input<int>(1, 31);
 
-		int numer_miasta = 0;
-
-		//i- map_width, j- map_height
-		for (int i = 0; i < m * 5; i++)
-		{
-			for (int j = 0; j < n * 5; j++)
-			{
-				if ((i == 0 || i % 5 == 0) && (j == 0 || j % 5 == 0))
-				{
-					cout << setw(2) << numer_miasta;
-					numer_miasta++;
-				}
-				else if (j % 5 != 0 && j != 0 && (i == 0 || i % 5 == 0))
-				{
-					cout << "-";
-				}
-				else if ((j == 0 || j % 5 == 0) && (i == 0 || i % 5 == 0))
-				{
-					cout << "|";
-				}
-			}
-			cout << endl;
-		}
-		
+		char numer_miasta = 'a';
+		char map[5 * 5][5 * 5]; // bedzie trzeba chyba zrobic dynamiczna inaczej sie nie da???
+		city_map_generation(numer_miasta, n, m, map);
 	}
 
 
@@ -85,9 +64,63 @@ int main()
 
 
 
-void city_map_generation()
+void city_map_generation(char numer_miasta, int n, int m, char map[][25])
 {
+	srand(time(NULL));
+	for (int map_height = 0; map_height < m * 5; map_height++)
+	{
+		for (int map_width = 0; map_width < n * 5; map_width++)
+		{
+			if ((map_height == 0 || map_height % 5 == 0) && (map_width == 0 || map_width % 5 == 0))
+			{
+				map[map_height][map_width] = numer_miasta;
+				numer_miasta++;
+			}
+			else if ((map_height == 0 || map_height % 5 == 0) && map_width < n * 5 - 5 && (map_width == 1 || (map_width > 5 && (map_width - 1) % 5 == 0)))
+			{
+				if (rand() % 2 == 0) {
+					for (int i = 0;i < 4;i++)
+					{
+						map[map_height][map_width + i] = '-';
+					}
+				}
+				else
+				{
+					for (int i = 0;i < 4;i++)
+					{
+						map[map_height][map_width + i] = ' ';
+					}
+				}
+			}
+			else if ((map_width == 0 || map_width % 5 == 0) && (map_height == 1 || (map_height > 5 && (map_height - 1) % 5 == 0)) && (map_height < m * 5 - 5))
+			{
+				if (rand() % 2 == 0) {
+					for (int i = 0;i < 4;i++)
+					{
+						map[map_height + i][map_width] = '|';
+					}
+				}
+				else
+				{
+					for (int i = 0;i < 4;i++)
+					{
+						map[map_height + i][map_width] = ' ';
+					}
+				}
+			}
+			else if ((map_height % 5 != 0 && map_width % 5 != 0) || map_height > m * 5 - 5 || map_width > m * 5 - 5)
+			{
+				map[map_height][map_width] = ' ';
+			}
+		}
+	}
 
+	for (int i = 0; i < 5 * 5; i++) {
+		for (int j = 0; j < 5 * 5; j++) {
+			cout << map[i][j];
+		}
+		cout << endl;
+	}
 }
 
 void clear_input_buffer()
