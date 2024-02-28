@@ -46,25 +46,41 @@ int main()
 	}
 	else if (choice == 1)
 	{
-		string* city_map = nullptr;
+		string* city_map = nullptr; 
 		cout << "Wprowadz wymiary miasta:" << endl;
-		cout << "Szerokosc max. 10 : ";
+		cout << "Szerokosc max. 31 : ";
 		int n = check_input<int>(1,31);
-		cout << "Wysokosc max. 20 : ";
+		cout << "Wysokosc max. 31 : ";
 		int m = check_input<int>(1,31);
+
 		int numer_miasta = 0;
 
+		//i- map_width, j- map_height
+		for (int i = 0; i < m * 5; i++)
+		{
+			for (int j = 0; j < n * 5; j++)
+			{
+				if ((i == 0 || i % 5 == 0) && (j == 0 || j % 5 == 0))
+				{
+					cout << setw(2) << numer_miasta;
+					numer_miasta++;
+				}
+				else if (j % 5 != 0 && j != 0 && (i == 0 || i % 5 == 0))
+				{
+					cout << "-";
+				}
+				else if ((j == 0 || j % 5 == 0) && (i == 0 || i % 5 == 0))
+				{
+					cout << "|";
+				}
+			}
+			cout << endl;
+		}
 		
 	}
 
 
-
-
-
-
 }
-
-
 
 
 
