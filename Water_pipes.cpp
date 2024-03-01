@@ -9,7 +9,7 @@ void start_screen();
 void clear_screen();
 void exit_program();
 //bool check_input(const int n, string type);
-void city_map_generation(char numer_miasta, int n, int m, char map[][25]);
+void city_map_generation(char numer_miasta, int n, int m, char map[][100]);
 char get_valid_option(const char* valid_options);
 void clear_input_buffer();
 
@@ -48,13 +48,13 @@ int main()
 	{
 		string* city_map = nullptr;
 		cout << "Wprowadz wymiary miasta:" << endl;
-		cout << "Szerokosc max. 31 : ";
-		int n = check_input<int>(1, 31);
-		cout << "Wysokosc max. 31 : ";
-		int m = check_input<int>(1, 31);
+		cout << "Szerokosc max. 15 : ";
+		int n = check_input<int>(1, 15);
+		cout << "Wysokosc max. 15 : ";
+		int m = check_input<int>(1, 15);
 
 		char numer_miasta = 'a';
-		char map[5 * 5][5 * 5]; // bedzie trzeba chyba zrobic dynamiczna inaczej sie nie da???
+		char map[100][100]; 
 		city_map_generation(numer_miasta, n, m, map);
 	}
 
@@ -64,7 +64,7 @@ int main()
 
 
 
-void city_map_generation(char numer_miasta, int n, int m, char map[][25])
+void city_map_generation(char numer_miasta, int n, int m, char map[][100])
 {
 	srand(time(NULL));
 	for (int map_height = 0; map_height < m * 5; map_height++)
@@ -115,8 +115,6 @@ void city_map_generation(char numer_miasta, int n, int m, char map[][25])
 		}
 	}
 	int random_street; // losowa droga jedna z 4 opcji
-
-
 
 	// tu jescze jest duzo pracy skroce to tak tylko pogladowo ;))
 	for (int map_height = 0; map_height < m * 5; map_height++)
@@ -193,8 +191,8 @@ void city_map_generation(char numer_miasta, int n, int m, char map[][25])
 		}
 	}
 
-	for (int i = 0; i < 5 * 5; i++) {
-		for (int j = 0; j < 5 * 5; j++) {
+	for (int i = 0; i < n * 5; i++) {
+		for (int j = 0; j < m * 5; j++) {
 			cout << map[i][j];
 		}
 		cout << endl;
