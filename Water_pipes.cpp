@@ -61,9 +61,6 @@ int main()
 
 }
 
-
-
-
 void city_map_generation(char numer_miasta, int n, int m, char map[][100])
 {
 	srand(time(NULL));
@@ -114,8 +111,7 @@ void city_map_generation(char numer_miasta, int n, int m, char map[][100])
 			}
 		}
 	}
-	int random_street; // losowa droga jedna z 4 opcji
-
+	int random_street;
 	// tu jescze jest duzo pracy skroce to tak tylko pogladowo ;))
 	for (int map_height = 0; map_height < m * 5; map_height++)
 	{
@@ -190,9 +186,8 @@ void city_map_generation(char numer_miasta, int n, int m, char map[][100])
 			}
 		}
 	}
-
-	for (int i = 0; i < n * 5; i++) {
-		for (int j = 0; j < m * 5; j++) {
+	for (int i = 0; i < m * 5; i++) {
+		for (int j = 0; j < n * 5; j++) {
 			cout << map[i][j];
 		}
 		cout << endl;
@@ -215,7 +210,6 @@ char get_valid_option(const char* valid_options) {
 	} while (strchr(valid_options, choice) == nullptr);
 	return choice;
 }
-
 
 void exit_program()
 {
