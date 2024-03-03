@@ -179,8 +179,8 @@ void city_map_generation(char numer_miasta, int n, int m, char map[][100])
                                 for (int i = 1;i < 5;i++)
                                 {
                                     map[map_height][map_width + i] = '-';
-                                    if (map_width != max_height)
-                                    map[map_height + i][map_width] = '|';
+                                    if (map_height != max_height)
+                                        map[map_height + i][map_width] = '|';
                                 }
                             }
                             else if ((random == 1 || random == 2) && map_width != 0)
@@ -189,7 +189,7 @@ void city_map_generation(char numer_miasta, int n, int m, char map[][100])
                                 {
                                     map[map_height][map_width - i] = '-';
                                     if (map_height != 0)
-                                    map[map_height - i][map_width] = '|';
+                                        map[map_height - i][map_width] = '|';
                                 }
                             }
                             else if ((random == 2 || random == 3) && map_height != 0)
@@ -198,9 +198,11 @@ void city_map_generation(char numer_miasta, int n, int m, char map[][100])
                                 {
                                     map[map_height - i][map_width] = '|';
                                     if (map_width != max_width)
-                                    map[map_height][map_width + i] = '-';
-                                    map[map_height][map_width - i] = '-';
-                                    map[map_height+i][map_width] = '-';
+                                        map[map_height][map_width + i] = '-';
+                                    if (map_width != 0)
+                                        map[map_height][map_width - i] = '-';
+                                    if (map_height != max_height)
+                                        map[map_height + i][map_width] = '|';
                                 }
                             }
                             else if ((random == 3 || random == 0) && map_height != max_height)
@@ -208,14 +210,16 @@ void city_map_generation(char numer_miasta, int n, int m, char map[][100])
                                 for (int i = 1;i < 5;i++)
                                 {
                                     map[map_height + i][map_width] = '|';
-                                    if(map_width != 0)
-                                    map[map_height][map_width - i] = '-';
-                                    map[map_height][map_width + i] = '-';
+                                    if (map_width != 0)
+                                        map[map_height][map_width - i] = '-';
+
+                                    if (map_width != max_width)
+                                        map[map_height][map_width + i] = '-';
 
                                 }
                             }
                             attemps++;
-                        } while ((map[map_height + 1][map_width] == ' ') || (map[map_height][map_width + 1] == ' ') || (map[map_height][map_width - 1] == ' ') && (map[map_height - 1][map_width] == ' '));
+                        } while (((map[map_height][map_width - 1] == ' ' && map[map_height + 1][map_width] == ' ') && (map[map_height - 1][map_width] == ' ' || map[map_height][map_width + 1] == ' ' || (map_width != 0 || map_width != max_width || map_height != 0 || map_height != max_height))));
                     }
                 }
             }
