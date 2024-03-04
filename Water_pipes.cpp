@@ -11,8 +11,9 @@ void clear_screen();
 void exit_program(char** map);
 void city_map_generation(char city_number, int n, int m, char** map);
 void clear_input_buffer();
-void create_empty_map(char** map, int width, int height);
+void create_empty_map(char**& map, int width, int height);
 void start_program(char** map);
+void print_map(char** map, int width, int height);
 
 template<typename T>
 T check_input(T min_val, T max_val) {
@@ -51,7 +52,7 @@ int main()
 	{
 		start_program(map);
 
-		const char city_number = 'a'; // po co to? 
+		const char city_number = 'A'; // po co to? 
 
 
 		//city_map_generation(city_number, col, row, map);
@@ -92,12 +93,14 @@ void start_program(char** map)
 	const int row = check_input<int>(2, 100);
 	const int width = (col + 5 * (col - 1));
 	const int height = (row + 3 * (row - 1));
-	create_empty_map(map, width, height);
+	create_empty_map(map, col, row);
+	//city_map_generation('A', col, row, map);
+	print_map(map, width, height);
 }
 
-void create_empty_map(char** map, const int width, const int height)
+void create_empty_map(char**& map, const int width, const int height)
 {
-	map= new char* [height];
+	map = new char* [height];
 	for (int i = 0; i < height; i++)
 	{
 		map[i] = new char[width];
@@ -111,145 +114,269 @@ void create_empty_map(char** map, const int width, const int height)
 	}
 }
 
-//void city_map_generation(char city_number, int width, int height, char** map)
-//{
-//	
-//	int max_width = (n * 5 - 5);
-//	int max_height = (m * 5 - 5);
-//	for (int map_height = 0; map_height < m * 5; map_height++)
-//	{
-//		for (int map_width = 0; map_width < n * 5; map_width++)
-//		{
-//			if ((map_height % 5 == 0) && (map_width % 5 == 0))
-//			{
-//				map[map_height][map_width] = city_number;
-//				city_number++;
-//			}
-//
-//			if ((map_height % 5 == 0) && map_width < max_width && ((map_width % 5 == 0)))
-//			{
-//				if (rand() % 9 < 8) {
-//					for (int i = 1; i < 5; i++)
-//					{
-//						map[map_height][map_width + i] = '-';
-//					}
-//				}
-//				else
-//				{
-//					for (int i = 1; i < 5; i++)
-//					{
-//						map[map_height][map_width + i] = ' ';
-//					}
-//				}
-//
-//				if ((rand() % 9 < 8) && map_width != 0) {
-//					for (int i = 1; i < 5; i++)
-//					{
-//						map[map_height][map_width - i] = '-';
-//					}
-//				}
-//				else if (map_width != 0)
-//				{
-//					for (int i = 1; i < 5; i++)
-//					{
-//						map[map_height][map_width - i] = ' ';
-//					}
-//				}
-//			}
-//
-//			if ((map_width % 5 == 0) && (map_height % 5 == 0) && (map_height < max_height))
-//			{
-//				if (rand() % 9 < 8) {
-//					for (int i = 1; i < 5; i++)
-//					{
-//						map[map_height + i][map_width] = '|';
-//					}
-//				}
-//				else
-//				{
-//					for (int i = 1; i < 5; i++)
-//					{
-//						map[map_height + i][map_width] = ' ';
-//					}
-//				}
-//
-//				if ((rand() % 9 < 8) && map_height != 0) {
-//					for (int i = 1; i < 5; i++)
-//					{
-//						map[map_height - i][map_width] = '|';
-//					}
-//				}
-//				else if (map_height != 0)
-//				{
-//					for (int i = 1; i < 5; i++)
-//					{
-//						map[map_height - i][map_width] = ' ';
-//					}
-//				}
-//			}
-//			else if ((map_height % 5 != 0 && map_width % 5 != 0) || map_height > max_height || map_width > max_width)
-//			{
-//				map[map_height][map_width] = ' ';
-//			}
-//		}
-//	}
-//
-//	for (int map_height = 0; map_height < m * 5; map_height++)
-//	{
-//		for (int map_width = 0; map_width < n * 5; map_width++)
-//		{
-//			if ((map_height == 0 || map_height % 5 == 0) && (map_width == 0 || map_width % 5 == 0))
-//			{
-//				if (map[map_height + 1][map_width] == ' ' && map_height != max_height && map[map_height][map_width + 1] == ' ' && map_width != max_width)
-//				{
-//					if (rand() % 9 < 5)
-//					{
-//						for (int i = 1; i < 5; i++)
-//						{
-//							map[map_height - i][map_width] = '|';
-//						}
-//					}
-//					else
-//					{
-//						for (int i = 1; i < 5; i++)
-//						{
-//							map[map_height][map_width + i] = '-';
-//						}
-//					}
-//				}
-//				else if (map[map_height][map_width - 1] == ' ' && map_width != 0 && map[map_height - 1][map_width] == ' ' && map_height != 0)
-//				{
-//					if (rand() % 9 < 5)
-//					{
-//						for (int i = 1; i < 5; i++)
-//						{
-//							map[map_height + i][map_width] = '|';
-//						}
-//					}
-//					else
-//					{
-//						for (int i = 1; i < 5; i++)
-//						{
-//							map[map_height][map_width - i] = '-';
-//						}
-//					}
-//
-//				}
-//			}
-//		}
-//	}
-//
-//
-//
-//
-//	for (int i = 0; i < m * 5; i++) {
-//		for (int j = 0; j < n * 5; j++) {
-//			cout << map[i][j];
-//		}
-//		cout << endl;
-//	}
-//}
+void city_map_generation(char city_number, int n, int m, char** map)
+{
 
+	int max_width = (n * 6 - 5);
+	int max_height = (m * 4 - 3);
+	for (int map_height = 0; map_height < m * 4; map_height++)
+	{
+		for (int map_width = 0; map_width < n * 6; map_width++)
+		{
+			if ((map_height % 4 == 0) && (map_width % 6 == 0))
+			{
+				map[map_height][map_width] = city_number;
+				city_number++;
+			}
+
+			if ((map_height % 4 == 0) && map_width < max_width && ((map_width % 6 == 0)))
+			{
+				if (rand() % 9 < 8) {
+					for (int i = 1; i < 6; i++)
+					{
+						map[map_height][map_width + i] = '-';
+					}
+				}
+				else
+				{
+					for (int i = 1; i < 6; i++)
+					{
+						map[map_height][map_width + i] = ' ';
+					}
+				}
+
+				if ((rand() % 9 < 8) && map_width != 0) {
+					for (int i = 1; i < 6; i++)
+					{
+						map[map_height][map_width - i] = '-';
+					}
+				}
+				else if (map_width != 0)
+				{
+					for (int i = 1; i < 6; i++)
+					{
+						map[map_height][map_width - i] = ' ';
+					}
+				}
+			}
+
+			if ((map_width % 6 == 0) && (map_height % 4 == 0) && (map_height < max_height))
+			{
+				if (rand() % 9 < 8) {
+					for (int i = 1; i < 4; i++)
+					{
+						map[map_height + i][map_width] = '|';
+					}
+				}
+				else
+				{
+					for (int i = 1; i < 4; i++)
+					{
+						map[map_height + i][map_width] = ' ';
+					}
+				}
+
+				if ((rand() % 9 < 8) && map_height != 0) {
+					for (int i = 1; i < 4; i++)
+					{
+						map[map_height - i][map_width] = '|';
+					}
+				}
+				else if (map_height != 0)
+				{
+					for (int i = 1; i < 4; i++)
+					{
+						map[map_height - i][map_width] = ' ';
+					}
+				}
+			}
+			else if ((map_height % 4 != 0 && map_width % 6 != 0) || map_height > max_height || map_width > max_width)
+			{
+				map[map_height][map_width] = ' ';
+			}
+		}
+	}
+
+	for (int map_height = 0; map_height < m * 4; map_height++)
+	{
+		for (int map_width = 0; map_width < n * 6; map_width++)
+		{
+			if ((map_height == 0 || map_height % 4 == 0) && (map_width == 0 || map_width % 6 == 0))
+			{
+				if (map[map_height + 1][map_width] == ' ' && map_height != 0 && map[map_height][map_width + 1] == ' ' && map_width != max_width)
+				{
+					if (rand() % 9 < 5)
+					{
+						for (int i = 1; i < 4; i++)
+						{
+							map[map_height - i][map_width] = '|';
+						}
+					}
+					else
+					{
+						for (int i = 1; i < 6; i++)
+						{
+							map[map_height][map_width + i] = '-';
+						}
+					}
+				}
+				else if (map[map_height][map_width - 1] == ' ' && map_width != 0 && map[map_height - 1][map_width] == ' ' && map_height != max_height)
+				{
+					if (rand() % 9 < 5)
+					{
+						for (int i = 1; i < 4; i++)
+						{
+							map[map_height + i][map_width] = '|';
+						}
+					}
+					else
+					{
+						for (int i = 1; i < 6; i++)
+						{
+							map[map_height][map_width - i] = '-';
+						}
+					}
+
+				}
+			}
+		}
+	}
+
+	//for (int map_height = 0; map_height < m * 5; map_height++)
+	//{
+	//	for (int map_width = 0; map_width < n * 5; map_width++)
+	//	{
+	//		if ((map_height % 4 == 0) && (map_width % 6 == 0))// Litery miast
+	//		{
+	//			map[map_height][map_width] = city_number;
+	//			city_number = ++city_number % 26;
+	//		}
+
+	//		if ((map_height % 5 == 0) && map_width < width && ((map_width % 5 == 0)))
+	//		{
+	//			if (rand() % 9 < 8) {
+	//				for (int i = 1; i < 5; i++)
+	//				{
+	//					map[map_height][map_width + i] = '-';
+	//				}
+	//			}
+	//			else
+	//			{
+	//				for (int i = 1; i < 5; i++)
+	//				{
+	//					map[map_height][map_width + i] = ' ';
+	//				}
+	//			}
+
+	//			if ((rand() % 9 < 8) && map_width != 0) {
+	//				for (int i = 1; i < 5; i++)
+	//				{
+	//					map[map_height][map_width - i] = '-';
+	//				}
+	//			}
+	//			else if (map_width != 0)
+	//			{
+	//				for (int i = 1; i < 5; i++)
+	//				{
+	//					map[map_height][map_width - i] = ' ';
+	//				}
+	//			}
+	//		}
+
+	//		if ((map_width % 5 == 0) && (map_height % 5 == 0) && (map_height < height))
+	//		{
+	//			if (rand() % 9 < 8) {
+	//				for (int i = 1; i < 5; i++)
+	//				{
+	//					map[map_height + i][map_width] = '|';
+	//				}
+	//			}
+	//			else
+	//			{
+	//				for (int i = 1; i < 5; i++)
+	//				{
+	//					map[map_height + i][map_width] = ' ';
+	//				}
+	//			}
+
+	//			if ((rand() % 9 < 8) && map_height != 0) {
+	//				for (int i = 1; i < 5; i++)
+	//				{
+	//					map[map_height - i][map_width] = '|';
+	//				}
+	//			}
+	//			else if (map_height != 0)
+	//			{
+	//				for (int i = 1; i < 5; i++)
+	//				{
+	//					map[map_height - i][map_width] = ' ';
+	//				}
+	//			}
+	//		}
+	//		else if ((map_height % 5 != 0 && map_width % 5 != 0) || map_height > height || map_width > width)
+	//		{
+	//			map[map_height][map_width] = ' ';
+	//		}
+	//	}
+	//}
+
+	//for (int map_height = 0; map_height < m * 5; map_height++)
+	//{
+	//	for (int map_width = 0; map_width < n * 5; map_width++)
+	//	{
+	//		if ((map_height == 0 || map_height % 5 == 0) && (map_width == 0 || map_width % 5 == 0))
+	//		{
+	//			if (map[map_height + 1][map_width] == ' ' && map_height != height && map[map_height][map_width + 1] == ' ' && map_width != width)
+	//			{
+	//				if (rand() % 9 < 5)
+	//				{
+	//					for (int i = 1; i < 5; i++)
+	//					{
+	//						map[map_height - i][map_width] = '|';
+	//					}
+	//				}
+	//				else
+	//				{
+	//					for (int i = 1; i < 5; i++)
+	//					{
+	//						map[map_height][map_width + i] = '-';
+	//					}
+	//				}
+	//			}
+	//			else if (map[map_height][map_width - 1] == ' ' && map_width != 0 && map[map_height - 1][map_width] == ' ' && map_height != 0)
+	//			{
+	//				if (rand() % 9 < 5)
+	//				{
+	//					for (int i = 1; i < 5; i++)
+	//					{
+	//						map[map_height + i][map_width] = '|';
+	//					}
+	//				}
+	//				else
+	//				{
+	//					for (int i = 1; i < 5; i++)
+	//					{
+	//						map[map_height][map_width - i] = '-';
+	//					}
+	//				}
+
+	//			}
+	//		}
+	//	}
+	//}
+
+}
+
+void print_map(char** map, int width, int height)
+{
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++)
+		{
+			cout << map[i][j];
+		}
+		cout << endl;
+	}
+}
 
 void clear_input_buffer()
 {
@@ -269,6 +396,11 @@ char get_valid_option(const char* valid_options) {
 }
 void exit_program(char** map)
 {
+	for (int i = 0; i < 100; i++)
+	{
+		delete[] map[i];
+	}
+
 	delete[] map;
 	cout << "Koniec programu" << endl;
 	exit(0);
