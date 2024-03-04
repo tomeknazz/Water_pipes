@@ -66,46 +66,74 @@ void city_map_generation(char numer_miasta, int n, int m, char map[][100])
     srand(time(NULL));
     int max_width = (n * 5 - 5);
     int max_height = (m * 5 - 5);
-
-
     for (int map_height = 0; map_height < m * 5; map_height++)
     {
         for (int map_width = 0; map_width < n * 5; map_width++)
         {
-            if ((map_height == 0 || map_height % 5 == 0) && (map_width == 0 || map_width % 5 == 0))
+            if ((map_height % 5 == 0) && (map_width % 5 == 0))
             {
                 map[map_height][map_width] = numer_miasta;
                 numer_miasta++;
             }
-            else if ((map_height == 0 || map_height % 5 == 0) && map_width < max_width && (map_width == 1 || (map_width > 5 && (map_width - 1) % 5 == 0)))
+
+            if ((map_height % 5 == 0) && map_width < max_width && ((map_width % 5 == 0)))
             {
-                if (rand() % 2 == 0) {
-                    for (int i = 0;i < 4;i++)
+                if (rand() % 9 < 8) {
+                    for (int i = 1;i < 5;i++)
                     {
                         map[map_height][map_width + i] = '-';
                     }
                 }
                 else
                 {
-                    for (int i = 0;i < 4;i++)
+                    for (int i = 1;i < 5;i++)
                     {
                         map[map_height][map_width + i] = ' ';
                     }
                 }
+
+                if ((rand() % 9 < 8) && map_width != 0) {
+                    for (int i = 1;i < 5;i++)
+                    {
+                        map[map_height][map_width - i] = '-';
+                    }
+                }
+                else if (map_width != 0)
+                {
+                    for (int i = 1;i < 5;i++)
+                    {
+                        map[map_height][map_width - i] = ' ';
+                    }
+                }
             }
-            else if ((map_width == 0 || map_width % 5 == 0) && (map_height == 1 || (map_height > 5 && (map_height - 1) % 5 == 0)) && (map_height < max_height))
+
+            if ((map_width % 5 == 0) && (map_height % 5 == 0) && (map_height < max_height))
             {
-                if (rand() % 2 == 0) {
-                    for (int i = 0;i < 4;i++)
+                if (rand() % 9 < 8) {
+                    for (int i = 1;i < 5;i++)
                     {
                         map[map_height + i][map_width] = '|';
                     }
                 }
                 else
                 {
-                    for (int i = 0;i < 4;i++)
+                    for (int i = 1;i < 5;i++)
                     {
                         map[map_height + i][map_width] = ' ';
+                    }
+                }
+
+                if ((rand() % 9 < 8) && map_height != 0) {
+                    for (int i = 1;i < 5;i++)
+                    {
+                        map[map_height - i][map_width] = '|';
+                    }
+                }
+                else if (map_height != 0)
+                {
+                    for (int i = 1;i < 5;i++)
+                    {
+                        map[map_height - i][map_width] = ' ';
                     }
                 }
             }
@@ -115,116 +143,55 @@ void city_map_generation(char numer_miasta, int n, int m, char map[][100])
             }
         }
     }
-    int random_street;
-    int attemps = 0;
+
     for (int map_height = 0; map_height < m * 5; map_height++)
     {
         for (int map_width = 0; map_width < n * 5; map_width++)
         {
             if ((map_height == 0 || map_height % 5 == 0) && (map_width == 0 || map_width % 5 == 0))
             {
-                if ((map[map_height + 1][map_width] == ' ' || map_height == max_height) && (map[map_height][map_width + 1] == ' ' || map_width == max_width) && (map[map_height][map_width - 1] == ' ' || map_width == 0) && (map[map_height - 1][map_width] == ' ' || map_height == 0))
+                if (map[map_height + 1][map_width] == ' ' && map_height != max_height && map[map_height][map_width + 1] == ' ' && map_width != max_width)
                 {
-                    random_street = rand() % 4;
-                    if (map_height == 0 && (map_width == 0 || map_width == max_width))
+                    if (rand() % 9 < 5)
                     {
                         for (int i = 1;i < 5;i++)
                         {
-                            if (map_width == 0)
-                            {
-                                map[map_height][map_width + i] = '-';
-                            }
-                            else
-                            {
-                                map[map_height][map_width - i] = '-';
-                            }
-                        }
-
-                        if (random_street == 0 || random_street == 1 || random_street == 2)
-                        {
-                            for (int i = 1;i < 5;i++) {
-                                map[map_height + i][map_width] = '|';
-                            }
-                        }
-                    }
-                    else if (map_height == max_height && (map_width == 0 || map_width == max_width))
-                    {
-                        for (int i = 1;i < 5;i++)
-                        {
-                            if (map_width == 0)
-                            {
-                                map[map_height][map_width + i] = '-';
-                            }
-                            else
-                            {
-                                map[map_height][map_width - i] = '-';
-                            }
-                        }
-
-                        if (random_street == 0 || random_street == 1 || random_street == 2)
-                        {
-                            for (int i = 1;i < 5;i++) {
-                                map[map_height - i][map_width] = '|';
-                            }
+                            map[map_height - i][map_width] = '|';
                         }
                     }
                     else
                     {
-                        do
+                        for (int i = 1;i < 5;i++)
                         {
-                            int random;
-                            random = rand() % 4;
-                            if ((random == 0 || random == 1) && map_width != max_width)
-                            {
-                                for (int i = 1;i < 5;i++)
-                                {
-                                    map[map_height][map_width + i] = '-';
-                                    if (map_height != max_height)
-                                        map[map_height + i][map_width] = '|';
-                                }
-                            }
-                            else if ((random == 1 || random == 2) && map_width != 0)
-                            {
-                                for (int i = 1;i < 5;i++)
-                                {
-                                    map[map_height][map_width - i] = '-';
-                                    if (map_height != 0)
-                                        map[map_height - i][map_width] = '|';
-                                }
-                            }
-                            else if ((random == 2 || random == 3) && map_height != 0)
-                            {
-                                for (int i = 1;i < 5;i++)
-                                {
-                                    map[map_height - i][map_width] = '|';
-                                    if (map_width != max_width)
-                                        map[map_height][map_width + i] = '-';
-                                    if (map_width != 0)
-                                        map[map_height][map_width - i] = '-';
-                                    if (map_height != max_height)
-                                        map[map_height + i][map_width] = '|';
-                                }
-                            }
-                            else if ((random == 3 || random == 0) && map_height != max_height)
-                            {
-                                for (int i = 1;i < 5;i++)
-                                {
-                                    map[map_height + i][map_width] = '|';
-                                    if (map_width != 0)
-                                        map[map_height][map_width - i] = '-';
-
-                                    if (map_width != max_width)
-                                        map[map_height][map_width + i] = '-';
-
-                                }
-                            }
-                            attemps++;
-                        } while (((map[map_height][map_width - 1] == ' ' && map[map_height + 1][map_width] == ' ') && (map[map_height - 1][map_width] == ' ' || map[map_height][map_width + 1] == ' ' || (map_width != 0 || map_width != max_width || map_height != 0 || map_height != max_height))));
+                            map[map_height][map_width + i] = '-';
+                        }
                     }
+                }
+                else if (map[map_height][map_width - 1] == ' ' && map_width != 0 && map[map_height - 1][map_width] == ' ' && map_height != 0)
+                {
+                    if (rand() % 9 < 5)
+                    {
+                        for (int i = 1;i < 5;i++)
+                        {
+                            map[map_height + i][map_width] = '|';
+                        }
+                    }
+                    else
+                    {
+                        for (int i = 1;i < 5;i++)
+                        {
+                            map[map_height][map_width - i] = '-';
+                        }
+                    }
+
                 }
             }
         }
     }
+
+
+
+
     for (int i = 0; i < m * 5; i++) {
         for (int j = 0; j < n * 5; j++) {
             cout << map[i][j];
@@ -232,7 +199,6 @@ void city_map_generation(char numer_miasta, int n, int m, char map[][100])
         cout << endl;
     }
 }
-
 void clear_input_buffer()
 {
     cin.clear();
@@ -249,13 +215,11 @@ char get_valid_option(const char* valid_options) {
     } while (strchr(valid_options, choice) == nullptr);
     return choice;
 }
-
 void exit_program()
 {
     cout << "Koniec programu" << endl;
     exit(0);
 }
-
 void start_screen()
 {
     cout << "\033[31m" << " _    _       _           ______ _                 " << endl; // Red
@@ -270,7 +234,6 @@ void start_screen()
     cout << "1. Rozpocznij program" << endl;
     cout << "2. Wyjscie" << endl;
 }
-
 void clear_screen()
 {
 #ifdef  _WIN32
