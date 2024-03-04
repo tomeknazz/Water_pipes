@@ -1,19 +1,28 @@
-﻿// ReSharper disable CppClangTidyClangDiagnosticInvalidUtf8
-#include <ctime>
-#include <iomanip>
+﻿#include <ctime>
 #include <iostream>
 #include <limits>
-#include <string>
+#include <cstdlib>
 using namespace std;
+
+struct node
+{
+	int x;
+	int y;
+	node* left;
+	node* right;
+	bool visited;
+};
 
 void start_screen();
 void clear_screen();
 void exit_program(char** map);
-void city_map_generation(char city_number, int n, int m, char** map);
+void city_map_generation(int n, int m, char** map);
 void clear_input_buffer();
 void create_empty_map(char**& map, int width, int height);
 void start_program(char** map);
 void print_map(char** map, int width, int height);
+void fill_nodes(node* nodes, int n, int m);
+void dfs(node* current);
 
 template<typename T>
 T check_input(T min_val, T max_val) {
@@ -52,10 +61,6 @@ int main()
 	{
 		start_program(map);
 
-		const char city_number = 'A'; // po co to? 
-
-
-		//city_map_generation(city_number, col, row, map);
 	}
 	/*  Exemplary table.
 	 *  City names- ABC....abc....ABC ???
@@ -91,10 +96,14 @@ void start_program(char** map)
 	const int col = check_input<int>(2, 100);
 	cout << "Height : ";
 	const int row = check_input<int>(2, 100);
-	const int width = (col + 5 * (col - 1));
-	const int height = (row + 3 * (row - 1));
-	create_empty_map(map, col, row);
-	//city_map_generation('A', col, row, map);
+	auto nodes = new node[col * row];
+	fill_nodes(nodes, row, col);
+	dfs(&nodes[0]);
+	const int width = (col*6);
+	const int height = (row *4);
+	create_empty_map(map, width, height);
+	city_map_generation(col, row, map);
+
 	print_map(map, width, height);
 }
 
@@ -114,19 +123,19 @@ void create_empty_map(char**& map, const int width, const int height)
 	}
 }
 
-void city_map_generation(char city_number, int n, int m, char** map)
+void city_map_generation(int n, int m, char** map)
 {
-
-	int max_width = (n * 6 - 5);
-	int max_height = (m * 4 - 3);
+	const int max_width = (n * 6 - 6);
+	const int max_height = (m * 4 - 4);
+	int city_number = 0;
 	for (int map_height = 0; map_height < m * 4; map_height++)
 	{
 		for (int map_width = 0; map_width < n * 6; map_width++)
 		{
 			if ((map_height % 4 == 0) && (map_width % 6 == 0))
 			{
-				map[map_height][map_width] = city_number;
-				city_number++;
+				map[map_height][map_width] = static_cast<char>(65 + city_number);
+				city_number = ++city_number % 26;
 			}
 
 			if ((map_height % 4 == 0) && map_width < max_width && ((map_width % 6 == 0)))
@@ -241,134 +250,43 @@ void city_map_generation(char city_number, int n, int m, char** map)
 			}
 		}
 	}
+}
 
-	//for (int map_height = 0; map_height < m * 5; map_height++)
-	//{
-	//	for (int map_width = 0; map_width < n * 5; map_width++)
-	//	{
-	//		if ((map_height % 4 == 0) && (map_width % 6 == 0))// Litery miast
-	//		{
-	//			map[map_height][map_width] = city_number;
-	//			city_number = ++city_number % 26;
-	//		}
 
-	//		if ((map_height % 5 == 0) && map_width < width && ((map_width % 5 == 0)))
-	//		{
-	//			if (rand() % 9 < 8) {
-	//				for (int i = 1; i < 5; i++)
-	//				{
-	//					map[map_height][map_width + i] = '-';
-	//				}
-	//			}
-	//			else
-	//			{
-	//				for (int i = 1; i < 5; i++)
-	//				{
-	//					map[map_height][map_width + i] = ' ';
-	//				}
-	//			}
 
-	//			if ((rand() % 9 < 8) && map_width != 0) {
-	//				for (int i = 1; i < 5; i++)
-	//				{
-	//					map[map_height][map_width - i] = '-';
-	//				}
-	//			}
-	//			else if (map_width != 0)
-	//			{
-	//				for (int i = 1; i < 5; i++)
-	//				{
-	//					map[map_height][map_width - i] = ' ';
-	//				}
-	//			}
-	//		}
+void fill_nodes(node* nodes, int n, int m) {
+	for (int i = 0; i < n * m; i++) {
+		nodes[i].x = i % n;
+		nodes[i].y = i / n;
+		nodes[i].left = (i - 1 >= 0 && (i % n != 0)) ? &nodes[i - 1] : nullptr;
+		nodes[i].right = (i + 1 < n * m && ((i + 1) % n != 0)) ? &nodes[i + 1] : nullptr;
+		nodes[i].visited = false;
+	}
+}
 
-	//		if ((map_width % 5 == 0) && (map_height % 5 == 0) && (map_height < height))
-	//		{
-	//			if (rand() % 9 < 8) {
-	//				for (int i = 1; i < 5; i++)
-	//				{
-	//					map[map_height + i][map_width] = '|';
-	//				}
-	//			}
-	//			else
-	//			{
-	//				for (int i = 1; i < 5; i++)
-	//				{
-	//					map[map_height + i][map_width] = ' ';
-	//				}
-	//			}
+void dfs(node* current) {
+	if (current == nullptr || current->visited)
+		return;
 
-	//			if ((rand() % 9 < 8) && map_height != 0) {
-	//				for (int i = 1; i < 5; i++)
-	//				{
-	//					map[map_height - i][map_width] = '|';
-	//				}
-	//			}
-	//			else if (map_height != 0)
-	//			{
-	//				for (int i = 1; i < 5; i++)
-	//				{
-	//					map[map_height - i][map_width] = ' ';
-	//				}
-	//			}
-	//		}
-	//		else if ((map_height % 5 != 0 && map_width % 5 != 0) || map_height > height || map_width > width)
-	//		{
-	//			map[map_height][map_width] = ' ';
-	//		}
-	//	}
-	//}
+	// Mark the current node as visited
+	current->visited = true;
+	std::cout << "(" << current->x << ", " << current->y << ") ";
 
-	//for (int map_height = 0; map_height < m * 5; map_height++)
-	//{
-	//	for (int map_width = 0; map_width < n * 5; map_width++)
-	//	{
-	//		if ((map_height == 0 || map_height % 5 == 0) && (map_width == 0 || map_width % 5 == 0))
-	//		{
-	//			if (map[map_height + 1][map_width] == ' ' && map_height != height && map[map_height][map_width + 1] == ' ' && map_width != width)
-	//			{
-	//				if (rand() % 9 < 5)
-	//				{
-	//					for (int i = 1; i < 5; i++)
-	//					{
-	//						map[map_height - i][map_width] = '|';
-	//					}
-	//				}
-	//				else
-	//				{
-	//					for (int i = 1; i < 5; i++)
-	//					{
-	//						map[map_height][map_width + i] = '-';
-	//					}
-	//				}
-	//			}
-	//			else if (map[map_height][map_width - 1] == ' ' && map_width != 0 && map[map_height - 1][map_width] == ' ' && map_height != 0)
-	//			{
-	//				if (rand() % 9 < 5)
-	//				{
-	//					for (int i = 1; i < 5; i++)
-	//					{
-	//						map[map_height + i][map_width] = '|';
-	//					}
-	//				}
-	//				else
-	//				{
-	//					for (int i = 1; i < 5; i++)
-	//					{
-	//						map[map_height][map_width - i] = '-';
-	//					}
-	//				}
+	// Recursively visit adjacent nodes
+	if (current->left != nullptr && !current->left->visited)
+		dfs(current->left);
+	if (current->right != nullptr && !current->right->visited)
+		dfs(current->right);
+}
 
-	//			}
-	//		}
-	//	}
-	//}
+void connect_cities(char** map, int width, int height, node* nodes)
+{
 
 }
 
 void print_map(char** map, int width, int height)
 {
+	clear_screen();
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++)
 		{
@@ -383,6 +301,7 @@ void clear_input_buffer()
 	cin.clear();
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
+
 char get_valid_option(const char* valid_options) {
 	char choice;
 	do {
@@ -394,6 +313,7 @@ char get_valid_option(const char* valid_options) {
 	} while (strchr(valid_options, choice) == nullptr);
 	return choice;
 }
+
 void exit_program(char** map)
 {
 	for (int i = 0; i < 100; i++)
@@ -405,6 +325,7 @@ void exit_program(char** map)
 	cout << "Koniec programu" << endl;
 	exit(0);
 }
+
 void start_screen()
 {
 	cout << "\033[31m" << " _    _       _           ______ _                 " << endl; // Red
@@ -419,6 +340,7 @@ void start_screen()
 	cout << "1. Run program" << endl;
 	cout << "2. Exit" << endl;
 }
+
 void clear_screen()
 {
 #ifdef  _WIN32
