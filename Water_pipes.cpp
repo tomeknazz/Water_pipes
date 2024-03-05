@@ -16,7 +16,7 @@ struct node
 
 void start_screen();
 void clear_screen();
-void exit_program(char** map);
+void exit_program(char** map, int height);
 void city_map_generation(int n, int m, char** map);
 void clear_input_buffer();
 void create_empty_map(char**& map, int width, int height);
@@ -57,7 +57,7 @@ int main()
 	const int choice = check_input<int>(1, 2);
 	if (choice == 2)
 	{
-		exit_program(map);
+		exit_program(map,0);
 	}
 	else if (choice == 1)
 	{
@@ -89,9 +89,6 @@ void create_empty_map(char**& map, const int width, const int height)
 	for (int i = 0; i < height; i++)
 	{
 		map[i] = new char[width];
-	}
-	for (int i = 0; i < height; i++)
-	{
 		for (int j = 0; j < width; j++)
 		{
 			map[i][j] = ' ';
@@ -99,7 +96,7 @@ void create_empty_map(char**& map, const int width, const int height)
 	}
 }
 
-void city_map_generation(int n, int m, char** map)
+void city_map_generation(const int n, const int m, char** map)
 {
 	const int max_width = (n * 6 - 6);
 	const int max_height = (m * 4 - 4);
@@ -176,7 +173,7 @@ void city_map_generation(int n, int m, char** map)
 	}
 }
 
-void street(char** map, int map_height, int map_width, int direction, int costam)
+void street(char** map, const int map_height, const int map_width, const int direction, const int costam)
 {
 	if (direction == 1) {
 		for (int i = 1; i < 6; i++) {
@@ -216,7 +213,7 @@ void street(char** map, int map_height, int map_width, int direction, int costam
 	}
 }
 
-void fill_nodes(node* nodes, int n, int m) {
+void fill_nodes(node* nodes, const int n, const int m) {
 	for (int i = 0; i < n * m; i++) {
 		nodes[i].x = i % n;
 		nodes[i].y = i / n;
@@ -246,7 +243,7 @@ void connect_cities(char** map, int width, int height, node* nodes)
 
 }
 
-void print_map(char** map, int width, int height)
+void print_map(char** map, const int width, const int height)
 {
 	clear_screen();
 	for (int i = 0; i < height; i++) {
@@ -275,15 +272,15 @@ char get_valid_option(const char* valid_options) {
 	return choice;
 }
 
-void exit_program(char** map)
+void exit_program(char** map, const int height)
 {
-	for (int i = 0; i < 100; i++)
+	for (int i = 0; i < height; i++)
 	{
 		delete[] map[i];
 	}
 
 	delete[] map;
-	cout << "Koniec programu" << endl;
+	cout << "End of program" << endl;
 	exit(0);
 }
 
