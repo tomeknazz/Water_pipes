@@ -1,7 +1,7 @@
-﻿#include <ctime>
-#include <iostream>
+﻿#include <iostream>
 #include <limits>
 #include <cstdlib>
+#include <ctime>
 using namespace std;
 
 struct node
@@ -23,6 +23,7 @@ void start_program(char** map);
 void print_map(char** map, int width, int height);
 void fill_nodes(node* nodes, int n, int m);
 void dfs(node* current);
+void street(char** map, int map_height, int map_width, int direction, int costam); // direction w prawo == 1 w lewo == 0  do gory == 3 w dol == 2
 
 template<typename T>
 T check_input(T min_val, T max_val) {
@@ -60,32 +61,7 @@ int main()
 	else if (choice == 1)
 	{
 		start_program(map);
-
 	}
-	/*  Exemplary table.
-	 *  City names- ABC....abc....ABC ???
-	C ----- C ----- C ----- C ----- C ----- D
-	║		|		|		|		|		|
-	║		|		|		|		|		|
-	║		|		|		|		|		|
-	C ----- C ----- C ----- C ----- C ----- D
-	║		|		|		|		|		|
-	║		|		|		|		|		|
-	║		|		|		|		|		|
-	C ----- C ----- C ----- C ----- C ----- D
-	║		|				|		|		|
-	║		|				|		|		|
-	║		|				|		|		|
-	C ----- C       C ----- C ----- C ----- D
-	║		|		║		|		|		|
-	║		|		║		|		|		|
-	║		|		║		|		|		|
-	C ===== C ===== C ----- C ----- C ----- D
-	|		|		|		|		|		|
-	|		|		|		|		|		|
-	|		|		|		|		|		|
-	A ----- A ----- A ----- A ----- A ----- A
-	*/
 }
 
 void start_program(char** map)
@@ -99,8 +75,8 @@ void start_program(char** map)
 	auto nodes = new node[col * row];
 	fill_nodes(nodes, row, col);
 	dfs(&nodes[0]);
-	const int width = (col*6);
-	const int height = (row *4);
+	const int width = (col * 6);
+	const int height = (row * 4);
 	create_empty_map(map, width, height);
 	city_map_generation(col, row, map);
 
@@ -141,62 +117,34 @@ void city_map_generation(int n, int m, char** map)
 			if ((map_height % 4 == 0) && map_width < max_width && ((map_width % 6 == 0)))
 			{
 				if (rand() % 9 < 8) {
-					for (int i = 1; i < 6; i++)
-					{
-						map[map_height][map_width + i] = '-';
-					}
+					street(map, map_height, map_width, 1, 1);
 				}
-				else
-				{
-					for (int i = 1; i < 6; i++)
-					{
-						map[map_height][map_width + i] = ' ';
-					}
+				else {
+					street(map, map_height, map_width, 1, 0);
 				}
 
 				if ((rand() % 9 < 8) && map_width != 0) {
-					for (int i = 1; i < 6; i++)
-					{
-						map[map_height][map_width - i] = '-';
-					}
+					street(map, map_height, map_width, 0, 1);
 				}
-				else if (map_width != 0)
-				{
-					for (int i = 1; i < 6; i++)
-					{
-						map[map_height][map_width - i] = ' ';
-					}
+				else if (map_width != 0) {
+					street(map, map_height, map_width, 0, 0);
 				}
 			}
 
 			if ((map_width % 6 == 0) && (map_height % 4 == 0) && (map_height < max_height))
 			{
 				if (rand() % 9 < 8) {
-					for (int i = 1; i < 4; i++)
-					{
-						map[map_height + i][map_width] = '|';
-					}
+					street(map, map_height, map_width, 2, 1);
 				}
-				else
-				{
-					for (int i = 1; i < 4; i++)
-					{
-						map[map_height + i][map_width] = ' ';
-					}
+				else {
+					street(map, map_height, map_width, 2, 0);
 				}
 
 				if ((rand() % 9 < 8) && map_height != 0) {
-					for (int i = 1; i < 4; i++)
-					{
-						map[map_height - i][map_width] = '|';
-					}
+					street(map, map_height, map_width, 3, 1);
 				}
-				else if (map_height != 0)
-				{
-					for (int i = 1; i < 4; i++)
-					{
-						map[map_height - i][map_width] = ' ';
-					}
+				else if (map_height != 0) {
+					street(map, map_height, map_width, 3, 0);
 				}
 			}
 			else if ((map_height % 4 != 0 && map_width % 6 != 0) || map_height > max_height || map_width > max_width)
@@ -214,45 +162,66 @@ void city_map_generation(int n, int m, char** map)
 			{
 				if (map[map_height + 1][map_width] == ' ' && map_height != 0 && map[map_height][map_width + 1] == ' ' && map_width != max_width)
 				{
-					if (rand() % 9 < 5)
-					{
-						for (int i = 1; i < 4; i++)
-						{
-							map[map_height - i][map_width] = '|';
-						}
+					if (rand() % 9 < 5) {
+						street(map, map_height, map_width, 3, 1);
 					}
-					else
-					{
-						for (int i = 1; i < 6; i++)
-						{
-							map[map_height][map_width + i] = '-';
-						}
+					else {
+						street(map, map_height, map_width, 1, 1);
 					}
 				}
 				else if (map[map_height][map_width - 1] == ' ' && map_width != 0 && map[map_height - 1][map_width] == ' ' && map_height != max_height)
 				{
-					if (rand() % 9 < 5)
-					{
-						for (int i = 1; i < 4; i++)
-						{
-							map[map_height + i][map_width] = '|';
-						}
+					if (rand() % 9 < 5) {
+						street(map, map_height, map_width, 2, 1);
 					}
-					else
-					{
-						for (int i = 1; i < 6; i++)
-						{
-							map[map_height][map_width - i] = '-';
-						}
+					else {
+						street(map, map_height, map_width, 0, 1);
 					}
-
 				}
 			}
 		}
 	}
 }
 
-
+void street(char** map, int map_height, int map_width, int direction, int costam)
+{
+	if (direction == 1) {
+		for (int i = 1; i < 6; i++) {
+			if (costam == 1)
+				map[map_height][map_width + i] = '-';
+			else {
+				map[map_height][map_width + i] = ' ';
+			}
+		}
+	}
+	else if (direction == 0) {
+		for (int i = 1; i < 6; i++) {
+			if (costam == 1)
+				map[map_height][map_width - i] = '-';
+			else {
+				map[map_height][map_width - i] = ' ';
+			}
+		}
+	}
+	else if (direction == 2) {
+		for (int i = 1; i < 4; i++) {
+			if (costam == 1)
+				map[map_height + i][map_width] = '|';
+			else {
+				map[map_height + i][map_width] = ' ';
+			}
+		}
+	}
+	else if (direction == 3) {
+		for (int i = 1; i < 4; i++) {
+			if (costam == 1)
+				map[map_height - i][map_width] = '|';
+			else {
+				map[map_height - i][map_width] = ' ';
+			}
+		}
+	}
+}
 
 void fill_nodes(node* nodes, int n, int m) {
 	for (int i = 0; i < n * m; i++) {
