@@ -1,7 +1,8 @@
-﻿#include <iostream>
-#include <limits>
+﻿#include <limits>
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
+
 using namespace std;
 
 struct node
@@ -23,7 +24,7 @@ void start_program(char** map);
 void print_map(char** map, int width, int height);
 void fill_nodes(node* nodes, int n, int m);
 void dfs(node* current);
-void street(char** map, int map_height, int map_width, int direction, int costam); // direction w prawo == 1 w lewo == 0  do gory == 3 w dol == 2
+void street(char** map, int map_height, int map_width, int direction, int costam); // direction w prawo == 1 w lewo == 0  do gory == 3 w dol == 2  costam xd to albo == 1 to jest droga ==0 nie ma drogi
 
 template<typename T>
 T check_input(T min_val, T max_val) {
@@ -79,7 +80,6 @@ void start_program(char** map)
 	const int height = (row * 4);
 	create_empty_map(map, width, height);
 	city_map_generation(col, row, map);
-
 	print_map(map, width, height);
 }
 
@@ -154,29 +154,22 @@ void city_map_generation(int n, int m, char** map)
 		}
 	}
 
-	for (int map_height = 0; map_height < m * 4; map_height++)
-	{
-		for (int map_width = 0; map_width < n * 6; map_width++)
-		{
-			if ((map_height == 0 || map_height % 4 == 0) && (map_width == 0 || map_width % 6 == 0))
-			{
-				if (map[map_height + 1][map_width] == ' ' && map_height != 0 && map[map_height][map_width + 1] == ' ' && map_width != max_width)
-				{
-					if (rand() % 9 < 5) {
-						street(map, map_height, map_width, 3, 1);
-					}
-					else {
-						street(map, map_height, map_width, 1, 1);
-					}
+	for (int map_height = 0; map_height < m * 4; map_height++) {
+		for (int map_width = 0; map_width < n * 6; map_width++) {
+			if ((map_height % 4 == 0) && (map_width % 6 == 0) && map_width != max_width && map_height != max_height && map[map_height + 1][map_width] == ' ' && map[map_height][map_width + 1] == ' ') {
+				if (rand() % 9 < 5) {
+					street(map, map_height, map_width, 2, 1);
 				}
-				else if (map[map_height][map_width - 1] == ' ' && map_width != 0 && map[map_height - 1][map_width] == ' ' && map_height != max_height)
-				{
-					if (rand() % 9 < 5) {
-						street(map, map_height, map_width, 2, 1);
-					}
-					else {
-						street(map, map_height, map_width, 0, 1);
-					}
+				else {
+					street(map, map_height, map_width, 1, 1);
+				}
+			}
+			else if ((map_height % 4 == 0) && (map_width % 6 == 0) && map_width != 0 && map_height != 0 && map[map_height][map_width - 1] == ' ' && map[map_height - 1][map_width] == ' ') {
+				if (rand() % 9 < 5) {
+					street(map, map_height, map_width, 3, 1);
+				}
+				else {
+					street(map, map_height, map_width, 0, 1);
 				}
 			}
 		}
@@ -257,8 +250,7 @@ void print_map(char** map, int width, int height)
 {
 	clear_screen();
 	for (int i = 0; i < height; i++) {
-		for (int j = 0; j < width; j++)
-		{
+		for (int j = 0; j < width; j++) {
 			cout << map[i][j];
 		}
 		cout << endl;
