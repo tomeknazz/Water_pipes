@@ -1,7 +1,7 @@
-﻿#include <limits>
-#include <cstdlib>
+﻿#include <cstdlib>
 #include <ctime>
 #include <iostream>
+#include <limits>
 
 using namespace std;
 
@@ -9,8 +9,12 @@ struct node
 {
 	int x;
 	int y;
-	node* left;
+	node* left;// nie lepiej tu zrovic char???? i spawdzac czy == '-' lub inne??
 	node* right;
+	node* up;
+	node* down;
+	string city_name;
+	char right1;
 	bool visited;
 };
 
@@ -57,7 +61,7 @@ int main()
 	const int choice = check_input<int>(1, 2);
 	if (choice == 2)
 	{
-		exit_program(map,0);
+		exit_program(map, 0);
 	}
 	else if (choice == 1)
 	{
@@ -74,13 +78,18 @@ void start_program(char** map)
 	cout << "Height : ";
 	const int row = check_input<int>(2, 100);
 	auto nodes = new node[col * row];
-	fill_nodes(nodes, row, col);
-	dfs(&nodes[0]);
 	const int width = (col * 6);
 	const int height = (row * 4);
 	create_empty_map(map, width, height);
 	city_map_generation(col, row, map);
+	fill_nodes(nodes, row, col);
+	dfs(&nodes[0]);
 	print_map(map, width, height);
+
+	for (int i = 0; i < (col * row);i++)
+	{
+		cout << nodes[i].x << ',' << nodes[i].y << ' ' << nodes[i].city_name << endl;
+	}
 }
 
 void create_empty_map(char**& map, const int width, const int height)
@@ -214,12 +223,24 @@ void street(char** map, const int map_height, const int map_width, const int dir
 }
 
 void fill_nodes(node* nodes, const int n, const int m) {
-	for (int i = 0; i < n * m; i++) {
-		nodes[i].x = i % n;
-		nodes[i].y = i / n;
-		nodes[i].left = (i - 1 >= 0 && (i % n != 0)) ? &nodes[i - 1] : nullptr;
-		nodes[i].right = (i + 1 < n * m && ((i + 1) % n != 0)) ? &nodes[i + 1] : nullptr;
-		nodes[i].visited = false;
+	char city_number = 0;
+	int z = 0;
+	for (int i = 0; i < n * m; i++) 
+	{
+		for (int j = 0; j < n * m; j++)
+		{
+			
+				nodes[i].x = i % n;
+				nodes[i].y = i / n;
+				nodes[i].left = (i - 1 >= 0 && (i % n != 0)) ? &nodes[i - 1] : nullptr;
+				nodes[i].right = (i + 1 < n * m && ((i + 1) % n != 0)) ? &nodes[i + 1] : nullptr;
+				nodes[i].up = (i - 1 >= 0 && (i % n != 0)) ? &nodes[i - 1] : nullptr;
+				nodes[i].down = (i + 1 < n * m && ((i + 1) % n != 0)) ? &nodes[i + 1] : nullptr;
+				nodes[i].city_name = static_cast<char>(65 + city_number);
+				nodes[i].visited = false;
+			
+		}
+		city_number++;
 	}
 }
 
