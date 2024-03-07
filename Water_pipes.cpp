@@ -22,10 +22,8 @@ void clear_input_buffer();
 void create_empty_map(char**& map, int width, int height);
 void start_program(char** map);
 void print_map(char** map, int width, int height);
-//void fill_nodes(node* nodes, int n, int m,char** map);
-void dfs(node* current);
 void street(char** map, int map_height, int map_width, int direction, int costam); // 1 - right, 0 - left, 2 - down, 3 - up
-
+void dfs(int x, int y, char** map, int cols, int rows);
 
 int check_input(int min_val, int max_val) {
 	int input{};
@@ -78,9 +76,8 @@ void start_program(char** map)
 	const int height = (row * 4);
 	create_empty_map(map, width, height);
 	city_map_generation(col, row, map);
-	//fill_nodes(nodes, row, col,map);
-	//dfs(&nodes[0]);
 	print_map(map, width, height);
+	dfs(0, 0, map, col, row);
 }
 
 void create_empty_map(char**& map, const int width, const int height)
@@ -213,54 +210,47 @@ void street(char** map, const int map_height, const int map_width, const int dir
 	}
 }
 
-void fill_nodes(node* nodes, const int n, const int m,char** map) {
-	char city_number = 0;
-	int z = 0;
-	const int max_height = (m * 4 - 4);
-	for (int i = 0; i < n * m; i++) 
+void dfs(int x, int y, char** map, int cols, int rows) {
+	const int max_width = (cols * 6 - 6);
+	const int max_height = (rows * 4 - 4);
+	bool* visited = new bool[cols * rows] {false};
+	int last_x;
+	int last_y;
+	visited[x + y * cols] = true;
+	if (y * 4 - 3 <= max_height)// czy nie za nisko
 	{
-		for (int j = 0; j < n * m;j++)
+		cout << x << y;
+		if (map[y * 4 + 1][x] == '|')// czy jest połaczenie
 		{
-			nodes[i].x = i % n;
-			nodes[i].y = i / n;
-			if (nodes[i].y + 1 < max_height)
-			{
-				if (map[nodes[i].y + 1][nodes[i].x] == '|')
-				{
-					nodes[i].left;
-				}
-				else
-				{
-					nodes[i].left = 0;
-				}
-			}
-			else
-			{
-				nodes[i].left = 0;
-			}
-			nodes[i].right = 0;
-			nodes[i].last = 0;
-			nodes[i].visited = false;
 
-
+			dfs(x, y + 1, map, cols, rows);
 		}
-		city_number++;
+		else if (x != 0)
+		{
+			if (map[y * 4 + 1][x - 1] == '-')// czy jest połączenie
+			{
+				dfs(x - 1, y, map, cols, rows);
+			}
+		}
+		else// jesli nie to sprawdz czy jest po prawej
+			if (x * 6 + 1 <= max_width)//czy nie za daleko
+			{
+				if (map[y][x * 6 + 1] == '-')//czy jest połączenie
+				{
+					dfs(x + 1, y, map, cols, rows);
+				}
+			}
+		//else wroc do poprzedniego
 	}
-}
+	else //wroc do prawej 
+	{
 
-void dfs(node* current) {
-	if (current == nullptr || current->visited)
-		return;
+	}
 
-	// Mark the current node as visited
-	current->visited = true;
-	std::cout << "(" << current->x << ", " << current->y << ") ";
 
-	// Recursively visit adjacent nodes
-	if (current->left != nullptr && !current->left->visited)
-		dfs(current->left);
-	if (current->right != nullptr && !current->right->visited)
-		dfs(current->right);
+
+
+
 }
 
 void connect_cities(char** map, int width, int height, node* nodes)
