@@ -9,12 +9,8 @@ struct node
 {
 	int x;
 	int y;
-	node* left;// nie lepiej tu zrovic char???? i spawdzac czy == '-' lub inne??
+	node* left;
 	node* right;
-	node* up;
-	node* down;
-	string city_name;
-	char right1;
 	bool visited;
 };
 
@@ -28,11 +24,11 @@ void start_program(char** map);
 void print_map(char** map, int width, int height);
 void fill_nodes(node* nodes, int n, int m);
 void dfs(node* current);
-void street(char** map, int map_height, int map_width, int direction, int costam); // direction w prawo == 1 w lewo == 0  do gory == 3 w dol == 2  costam xd to albo == 1 to jest droga ==0 nie ma drogi
+void street(char** map, int map_height, int map_width, int direction, int costam); // 1 - right, 0 - left, 2 - down, 3 - up
 
-template<typename T>
-T check_input(T min_val, T max_val) {
-	T input{};
+
+int check_input(int min_val, int max_val) {
+	int input{};
 	bool is_valid_input = false;
 	do {
 
@@ -58,7 +54,7 @@ int main()
 	srand(time(nullptr));
 	char** map = nullptr;
 	start_screen();
-	const int choice = check_input<int>(1, 2);
+	const int choice = check_input(1, 2);
 	if (choice == 2)
 	{
 		exit_program(map, 0);
@@ -74,9 +70,9 @@ void start_program(char** map)
 	clear_screen();
 	cout << "Please enter map dimensions :" << endl;
 	cout << "Width : ";
-	const int col = check_input<int>(2, 100);
+	const int col = check_input(2, 100);
 	cout << "Height : ";
-	const int row = check_input<int>(2, 100);
+	const int row = check_input(2, 100);
 	auto nodes = new node[col * row];
 	const int width = (col * 6);
 	const int height = (row * 4);
@@ -88,7 +84,7 @@ void start_program(char** map)
 
 	for (int i = 0; i < (col * row);i++)
 	{
-		cout << nodes[i].x << ',' << nodes[i].y << ' ' << nodes[i].city_name << endl;
+		cout << nodes[i].x << ',' << nodes[i].y <<  endl;
 	}
 }
 
@@ -234,9 +230,6 @@ void fill_nodes(node* nodes, const int n, const int m) {
 				nodes[i].y = i / n;
 				nodes[i].left = (i - 1 >= 0 && (i % n != 0)) ? &nodes[i - 1] : nullptr;
 				nodes[i].right = (i + 1 < n * m && ((i + 1) % n != 0)) ? &nodes[i + 1] : nullptr;
-				nodes[i].up = (i - 1 >= 0 && (i % n != 0)) ? &nodes[i - 1] : nullptr;
-				nodes[i].down = (i + 1 < n * m && ((i + 1) % n != 0)) ? &nodes[i + 1] : nullptr;
-				nodes[i].city_name = static_cast<char>(65 + city_number);
 				nodes[i].visited = false;
 			
 		}
@@ -281,17 +274,6 @@ void clear_input_buffer()
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
 
-char get_valid_option(const char* valid_options) {
-	char choice;
-	do {
-		cin >> choice;
-		cin.ignore(10, '\n');
-		if (strchr(valid_options, choice) == nullptr) {
-			cout << "Invalid option. Please try again." << endl;
-		}
-	} while (strchr(valid_options, choice) == nullptr);
-	return choice;
-}
 
 void exit_program(char** map, const int height)
 {
