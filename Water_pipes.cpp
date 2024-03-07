@@ -2,7 +2,6 @@
 #include <ctime>
 #include <iostream>
 #include <limits>
-
 using namespace std;
 
 struct node
@@ -11,6 +10,7 @@ struct node
 	int y;
 	node* left;
 	node* right;
+	node* last;
 	bool visited;
 };
 
@@ -22,7 +22,7 @@ void clear_input_buffer();
 void create_empty_map(char**& map, int width, int height);
 void start_program(char** map);
 void print_map(char** map, int width, int height);
-void fill_nodes(node* nodes, int n, int m);
+//void fill_nodes(node* nodes, int n, int m,char** map);
 void dfs(node* current);
 void street(char** map, int map_height, int map_width, int direction, int costam); // 1 - right, 0 - left, 2 - down, 3 - up
 
@@ -78,14 +78,9 @@ void start_program(char** map)
 	const int height = (row * 4);
 	create_empty_map(map, width, height);
 	city_map_generation(col, row, map);
-	fill_nodes(nodes, row, col);
-	dfs(&nodes[0]);
+	//fill_nodes(nodes, row, col,map);
+	//dfs(&nodes[0]);
 	print_map(map, width, height);
-
-	for (int i = 0; i < (col * row);i++)
-	{
-		cout << nodes[i].x << ',' << nodes[i].y <<  endl;
-	}
 }
 
 void create_empty_map(char**& map, const int width, const int height)
@@ -218,20 +213,36 @@ void street(char** map, const int map_height, const int map_width, const int dir
 	}
 }
 
-void fill_nodes(node* nodes, const int n, const int m) {
+void fill_nodes(node* nodes, const int n, const int m,char** map) {
 	char city_number = 0;
 	int z = 0;
+	const int max_height = (m * 4 - 4);
 	for (int i = 0; i < n * m; i++) 
 	{
-		for (int j = 0; j < n * m; j++)
+		for (int j = 0; j < n * m;j++)
 		{
-			
-				nodes[i].x = i % n;
-				nodes[i].y = i / n;
-				nodes[i].left = (i - 1 >= 0 && (i % n != 0)) ? &nodes[i - 1] : nullptr;
-				nodes[i].right = (i + 1 < n * m && ((i + 1) % n != 0)) ? &nodes[i + 1] : nullptr;
-				nodes[i].visited = false;
-			
+			nodes[i].x = i % n;
+			nodes[i].y = i / n;
+			if (nodes[i].y + 1 < max_height)
+			{
+				if (map[nodes[i].y + 1][nodes[i].x] == '|')
+				{
+					nodes[i].left;
+				}
+				else
+				{
+					nodes[i].left = 0;
+				}
+			}
+			else
+			{
+				nodes[i].left = 0;
+			}
+			nodes[i].right = 0;
+			nodes[i].last = 0;
+			nodes[i].visited = false;
+
+
 		}
 		city_number++;
 	}
