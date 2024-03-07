@@ -4,7 +4,7 @@
 #include <limits>
 
 using namespace std;
-sd
+
 struct node
 {
 	int x;
