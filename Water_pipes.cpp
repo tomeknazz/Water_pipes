@@ -1,7 +1,7 @@
-﻿#include <cstdlib>
-#include <ctime>
+﻿#include <ctime>
 #include <iostream>
 #include <limits>
+#include <cstdlib>
 using namespace std;
 
 struct node
@@ -13,7 +13,6 @@ struct node
 	node* last;
 	bool visited;
 };
-
 void start_screen();
 void clear_screen();
 void exit_program(char** map, int height);
@@ -23,13 +22,11 @@ void create_empty_map(char**& map, int width, int height);
 void start_program(char** map);
 void print_map(char** map, int width, int height);
 void street(char** map, int map_height, int map_width, int direction, int costam); // 1 - right, 0 - left, 2 - down, 3 - up
-void dfs(int x, int y, char** map, int cols, int rows,bool *visited);
+void dfs(int x, int y, char** map, int cols, int rows, bool* visited);
 bool check_if_left(const int x, const int y, char** map);
 bool check_if_right(int x, int y, char** map, int max_width);
 bool check_if_up(int x, int y, char** map);
 bool check_if_down(int x, int y, char** map, int max_height);
-
-
 
 int check_input(int min_val, int max_val) {
 	int input{};
@@ -80,12 +77,32 @@ void start_program(char** map)
 	auto nodes = new node[col * row];
 	const int width = (col * 6);
 	const int height = (row * 4);
+	int enter;
+	int counting_cities;
 	create_empty_map(map, width, height);
-	city_map_generation(col, row, map);
-	print_map(map, width, height);
-	bool* visited = new bool[col * row] {false};
-	dfs(0, 0, map, col, row, visited);
-	print_map(map, width, height);
+	do {
+		counting_cities = 0;
+		create_empty_map(map, width, height);
+		city_map_generation(col, row, map);
+		print_map(map, width, height);
+		bool* visited = new bool[col * row] {false};
+		dfs(0, 0, map, col, row, visited);
+		for (int i = 0; i < col * row; i++) {
+			if (visited[i] == 1) {
+				counting_cities++;
+			}
+		}
+		if (counting_cities != col * row) {
+			clear_screen();
+		}
+	} while (counting_cities != col * row);
+	cout << "All cities are connected at least with one roud to connect cities with watter supply network press 1 " << endl;
+	cin >> enter;
+	if (enter == 1)
+	{
+		clear_screen();
+		print_map(map, width, height);
+	}
 }
 
 void create_empty_map(char**& map, const int width, const int height)
@@ -118,7 +135,7 @@ void city_map_generation(const int n, const int m, char** map)
 
 			if ((map_height % 4 == 0) && map_width < max_width && ((map_width % 6 == 0)))
 			{
-				if (rand() % 9 < 8) {
+				if (rand() % 9 < 7) {
 					street(map, map_height, map_width, 1, 1);
 				}
 				else {
@@ -135,7 +152,7 @@ void city_map_generation(const int n, const int m, char** map)
 
 			if ((map_width % 6 == 0) && (map_height % 4 == 0) && (map_height < max_height))
 			{
-				if (rand() % 9 < 8) {
+				if (rand() % 9 < 7) {
 					street(map, map_height, map_width, 2, 1);
 				}
 				else {
@@ -218,29 +235,30 @@ void street(char** map, const int map_height, const int map_width, const int dir
 	}
 }
 
-void dfs(int x, int y, char** map, int cols, int rows,bool*visited) {
+void dfs(int x, int y, char** map, int cols, int rows, bool* visited) {
 	const int max_width = (cols * 6 - 6);
 	const int max_height = (rows * 4 - 4);
-	
 	static int last_x;
 	static int last_y;
+	int counting_cities;
 	visited[x + y * cols] = true;
-	cout << x << y<<endl;
+	cout << x << y << endl;
+
 	if (check_if_left(x, y, map) and !visited[x - 1 + y * cols])
 	{
 		for (int i = 0; i < 5; i++)
 		{
-			map[y * 4 ][x * 6 - i-1] = '=';
+			map[y * 4][x * 6 - i - 1] = '=';
 		}
 		last_x = x;
 		last_y = y;
-		dfs(x - 1, y, map, cols, rows,visited);
+		dfs(x - 1, y, map, cols, rows, visited);
 	}
 	else if (check_if_down(x, y, map, max_height) and !visited[x + (y + 1) * cols])
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			map[y * 4 + i+1][x * 6 ] = char(186);
+			map[y * 4 + i + 1][x * 6] = char(186);
 		}
 		last_x = x;
 		last_y = y;
@@ -250,7 +268,7 @@ void dfs(int x, int y, char** map, int cols, int rows,bool*visited) {
 	{
 		for (int i = 0; i < 5; i++)
 		{
-			map[y * 4 ][x * 6 + i+1] = '=';
+			map[y * 4][x * 6 + i + 1] = '=';
 		}
 		last_x = x;
 		last_y = y;
@@ -260,30 +278,27 @@ void dfs(int x, int y, char** map, int cols, int rows,bool*visited) {
 	{
 		for (int i = 0; i < 3; i++)
 		{
-			map[y * 4 - i-1][x * 6 ] = char(186);
+			map[y * 4 - i - 1][x * 6] = char(186);
 		}
-		last_x=x;
-		last_y=y;
+		last_x = x;
+		last_y = y;
 		dfs(x, y - 1, map, cols, rows, visited);
+	}
+	else if (1)// ta jedynka bo cos tu wymysle
+	{
+		visited[x - 1];
 	}
 	else
 	{
 		return;
 	}
-
-
-
-
-
-
-
 }
 
 bool check_if_left(const int x, const int y, char** map)
 {
 	if (x != 0 and x * 6 - 1 > 0)
 	{
-		if (map[y*4][x*6 - 1] == '-')// czy jest połączenie
+		if (map[y * 4][x * 6 - 1] == '-')// czy jest połączenie
 		{
 			return true;
 		}
@@ -296,7 +311,7 @@ bool check_if_right(int x, int y, char** map, int max_width)
 {
 	if (x * 6 + 1 <= max_width)
 	{
-		if (map[y*4][x * 6 + 1] == '-')//czy jest połączenie
+		if (map[y * 4][x * 6 + 1] == '-')//czy jest połączenie
 		{
 			return true;
 		}
@@ -304,12 +319,11 @@ bool check_if_right(int x, int y, char** map, int max_width)
 	return false;
 }
 
-
 bool check_if_up(int x, int y, char** map)
 {
 	if (y != 0 and y * 4 - 1 > 0)
 	{
-		if (map[y*4 - 1][x*6] == '|')// czy jest połączenie
+		if (map[y * 4 - 1][x * 6] == '|')// czy jest połączenie
 		{
 			return true;
 		}
@@ -319,9 +333,9 @@ bool check_if_up(int x, int y, char** map)
 
 bool check_if_down(int x, int y, char** map, int max_height)
 {
-	if (y * 4 -1 <= max_height)
+	if (y * 4 - 1 <= max_height)
 	{
-		if (map[y*4 + 1][x*6] == '|')// czy jest połączenie
+		if (map[y * 4 + 1][x * 6] == '|')// czy jest połączenie
 		{
 			return true;
 		}
@@ -337,7 +351,7 @@ void connect_cities(char** map, int width, int height, node* nodes)
 
 void print_map(char** map, const int width, const int height)
 {
-	
+
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
 			cout << map[i][j];
@@ -351,7 +365,6 @@ void clear_input_buffer()
 	cin.clear();
 	cin.ignore(numeric_limits<streamsize>::max(), '\n');
 }
-
 
 void exit_program(char** map, const int height)
 {
