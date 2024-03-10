@@ -23,7 +23,13 @@ void create_empty_map(char**& map, int width, int height);
 void start_program(char** map);
 void print_map(char** map, int width, int height);
 void street(char** map, int map_height, int map_width, int direction, int costam); // 1 - right, 0 - left, 2 - down, 3 - up
-void dfs(int x, int y, char** map, int cols, int rows);
+void dfs(int x, int y, char** map, int cols, int rows,bool *visited);
+bool check_if_left(const int x, const int y, char** map);
+bool check_if_right(int x, int y, char** map, int max_width);
+bool check_if_up(int x, int y, char** map);
+bool check_if_down(int x, int y, char** map, int max_height);
+
+
 
 int check_input(int min_val, int max_val) {
 	int input{};
@@ -77,7 +83,9 @@ void start_program(char** map)
 	create_empty_map(map, width, height);
 	city_map_generation(col, row, map);
 	print_map(map, width, height);
-	dfs(0, 0, map, col, row);
+	bool* visited = new bool[col * row] {false};
+	dfs(0, 0, map, col, row, visited);
+	print_map(map, width, height);
 }
 
 void create_empty_map(char**& map, const int width, const int height)
@@ -210,47 +218,116 @@ void street(char** map, const int map_height, const int map_width, const int dir
 	}
 }
 
-void dfs(int x, int y, char** map, int cols, int rows) {
+void dfs(int x, int y, char** map, int cols, int rows,bool*visited) {
 	const int max_width = (cols * 6 - 6);
 	const int max_height = (rows * 4 - 4);
-	bool* visited = new bool[cols * rows] {false};
-	int last_x;
-	int last_y;
+	
+	static int last_x;
+	static int last_y;
 	visited[x + y * cols] = true;
-	if (y * 4 - 3 <= max_height)// czy nie za nisko
+	cout << x << y<<endl;
+	if (check_if_left(x, y, map) and !visited[x - 1 + y * cols])
 	{
-		cout << x << y;
-		if (map[y * 4 + 1][x] == '|')// czy jest połaczenie
+		for (int i = 0; i < 5; i++)
 		{
-
-			dfs(x, y + 1, map, cols, rows);
+			map[y * 4 ][x * 6 - i-1] = '=';
 		}
-		else if (x != 0)
-		{
-			if (map[y * 4 + 1][x - 1] == '-')// czy jest połączenie
-			{
-				dfs(x - 1, y, map, cols, rows);
-			}
-		}
-		else// jesli nie to sprawdz czy jest po prawej
-			if (x * 6 + 1 <= max_width)//czy nie za daleko
-			{
-				if (map[y][x * 6 + 1] == '-')//czy jest połączenie
-				{
-					dfs(x + 1, y, map, cols, rows);
-				}
-			}
-		//else wroc do poprzedniego
+		last_x = x;
+		last_y = y;
+		dfs(x - 1, y, map, cols, rows,visited);
 	}
-	else //wroc do prawej 
+	else if (check_if_down(x, y, map, max_height) and !visited[x + (y + 1) * cols])
 	{
-
+		for (int i = 0; i < 3; i++)
+		{
+			map[y * 4 + i+1][x * 6 ] = char(186);
+		}
+		last_x = x;
+		last_y = y;
+		dfs(x, y + 1, map, cols, rows, visited);
+	}
+	else if (check_if_right(x, y, map, max_width) and !visited[x + 1 + y * cols])
+	{
+		for (int i = 0; i < 5; i++)
+		{
+			map[y * 4 ][x * 6 + i+1] = '=';
+		}
+		last_x = x;
+		last_y = y;
+		dfs(x + 1, y, map, cols, rows, visited);
+	}
+	else if (check_if_up(x, y, map) and !visited[x + (y - 1) * cols])
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			map[y * 4 - i-1][x * 6 ] = char(186);
+		}
+		last_x=x;
+		last_y=y;
+		dfs(x, y - 1, map, cols, rows, visited);
+	}
+	else
+	{
+		return;
 	}
 
 
 
 
 
+
+
+}
+
+bool check_if_left(const int x, const int y, char** map)
+{
+	if (x != 0 and x * 6 - 1 > 0)
+	{
+		if (map[y*4][x*6 - 1] == '-')// czy jest połączenie
+		{
+			return true;
+		}
+	}
+	return false;
+
+}
+
+bool check_if_right(int x, int y, char** map, int max_width)
+{
+	if (x * 6 + 1 <= max_width)
+	{
+		if (map[y*4][x * 6 + 1] == '-')//czy jest połączenie
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+
+bool check_if_up(int x, int y, char** map)
+{
+	if (y != 0 and y * 4 - 1 > 0)
+	{
+		if (map[y*4 - 1][x*6] == '|')// czy jest połączenie
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool check_if_down(int x, int y, char** map, int max_height)
+{
+	if (y * 4 -1 <= max_height)
+	{
+		if (map[y*4 + 1][x*6] == '|')// czy jest połączenie
+		{
+			return true;
+		}
+
+	}
+	return false;
 }
 
 void connect_cities(char** map, int width, int height, node* nodes)
@@ -260,7 +337,7 @@ void connect_cities(char** map, int width, int height, node* nodes)
 
 void print_map(char** map, const int width, const int height)
 {
-	clear_screen();
+	
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
 			cout << map[i][j];
