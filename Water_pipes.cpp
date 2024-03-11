@@ -5,6 +5,8 @@
 
 using namespace std;
 
+constexpr int random_rate = 6;// value from 1 to 8, the higher the value, the more streets will be generated
+
 void start_screen();
 void clear_screen();
 void exit_program(char** map, int height);
@@ -21,7 +23,6 @@ bool check_if_up(int x, int y, char** map);
 bool check_if_down(int x, int y, char** map, int max_height);
 void supply_network_screen();
 int check_input(int min_val, int max_val);
-
 
 int main() {
 	srand(time(nullptr));
@@ -95,14 +96,14 @@ void city_map_generation(const int n, const int m, char** map) {
 			}
 
 			if ((map_height % 4 == 0) && map_width < max_width && ((map_width % 6 == 0))) {
-				if (rand() % 9 < 6) {
+				if (rand() % 9 < random_rate) {
 					street(map, map_height, map_width, 1, 1);
 				}
 				else {
 					street(map, map_height, map_width, 1, 0);
 				}
 
-				if ((rand() % 9 < 6) && map_width != 0) {
+				if ((rand() % 9 < random_rate) && map_width != 0) {
 					street(map, map_height, map_width, 0, 1);
 				}
 				else if (map_width != 0) {
@@ -111,14 +112,14 @@ void city_map_generation(const int n, const int m, char** map) {
 			}
 
 			if ((map_width % 6 == 0) && (map_height % 4 == 0) && (map_height < max_height)) {
-				if (rand() % 9 < 6) {
+				if (rand() % 9 < random_rate) {
 					street(map, map_height, map_width, 2, 1);
 				}
 				else {
 					street(map, map_height, map_width, 2, 0);
 				}
 
-				if ((rand() % 9 < 6) && map_height != 0) {
+				if ((rand() % 9 < random_rate) && map_height != 0) {
 					street(map, map_height, map_width, 3, 1);
 				}
 				else if (map_height != 0) {
