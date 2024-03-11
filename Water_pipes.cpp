@@ -1,7 +1,7 @@
-﻿#include <ctime>
-#include <iostream>
+﻿#include <iostream>
 #include <limits>
 #include <cstdlib>
+#include <ctime>
 using namespace std;
 
 struct node
@@ -27,6 +27,7 @@ bool check_if_left(const int x, const int y, char** map);
 bool check_if_right(int x, int y, char** map, int max_width);
 bool check_if_up(int x, int y, char** map);
 bool check_if_down(int x, int y, char** map, int max_height);
+void supply_network_screen();
 
 int check_input(int min_val, int max_val) {
 	int input{};
@@ -45,7 +46,6 @@ int check_input(int min_val, int max_val) {
 			is_valid_input = true;
 		}
 	} while (!is_valid_input);
-
 	clear_input_buffer(); // Clear input buffer for next input
 	return input;
 }
@@ -56,12 +56,10 @@ int main()
 	char** map = nullptr;
 	start_screen();
 	const int choice = check_input(1, 2);
-	if (choice == 2)
-	{
+	if (choice == 2) {
 		exit_program(map, 0);
 	}
-	else if (choice == 1)
-	{
+	else if (choice == 1) {
 		start_program(map);
 	}
 }
@@ -96,10 +94,9 @@ void start_program(char** map)
 			clear_screen();
 		}
 	} while (counting_cities != col * row);
-	cout << "All cities are connected at least with one roud to connect cities with watter supply network press 1 " << endl;
+	supply_network_screen();
 	cin >> enter;
-	if (enter == 1)
-	{
+	if (enter == 1) {
 		clear_screen();
 		print_map(map, width, height);
 	}
@@ -242,7 +239,6 @@ void dfs(int x, int y, char** map, int cols, int rows, bool* visited) {
 	static int last_y;
 	int counting_cities;
 	visited[x + y * cols] = true;
-	cout << x << y << endl;
 
 	if (check_if_left(x, y, map) and !visited[x - 1 + y * cols])
 	{
@@ -284,9 +280,25 @@ void dfs(int x, int y, char** map, int cols, int rows, bool* visited) {
 		last_y = y;
 		dfs(x, y - 1, map, cols, rows, visited);
 	}
-	else if (1)// ta jedynka bo cos tu wymysle
+	else if ((check_if_right(x, y, map, max_width) == false) && (check_if_up(x, y, map) == false) && (check_if_down(x, y, map, max_height) == false) && (check_if_left(x, y, map) == true))
 	{
-		visited[x - 1];
+		visited[x - 1 + y * cols] = false;
+		dfs(last_x, y, map, cols, rows, visited);
+	}
+	else if ((check_if_right(x, y, map, max_width) == false) && (check_if_up(x, last_y, map) == true) && (check_if_down(x, y, map, max_height) == false) && (check_if_left(x, y, map) == false))
+	{
+		visited[x + (y + 1) * cols] = false;
+		dfs(x, last_y, map, cols, rows, visited);
+	}
+	else if ((check_if_right(x, y, map, max_width) == false) && (check_if_up(x, y, map) == false) && (check_if_down(x, last_y, map, max_height) == true) && (check_if_left(x, y, map) == false))
+	{
+		visited[x + (y - 1) * cols] = false;
+		dfs(x, last_y, map, cols, rows, visited);
+	}
+	else if ((check_if_right(x, y, map, max_width) == true) && (check_if_up(x, y, map) == false) && (check_if_down(x, y, map, max_height) == false) && (check_if_left(x, y, map) == false))
+	{
+		visited[x + 1 + y * cols] = false;
+		dfs(last_x, y, map, cols, rows, visited);
 	}
 	else
 	{
@@ -344,9 +356,11 @@ bool check_if_down(int x, int y, char** map, int max_height)
 	return false;
 }
 
-void connect_cities(char** map, int width, int height, node* nodes)
+void supply_network_screen()
 {
-
+	cout << "---------------------------------------------------------------------------------------------------- " << endl;
+	cout << "All cities are connected at least with one roud to connect cities with watter supply network press 1 " << endl;
+	cout << "---------------------------------------------------------------------------------------------------- " << endl;
 }
 
 void print_map(char** map, const int width, const int height)
