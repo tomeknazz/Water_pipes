@@ -5,7 +5,7 @@
 
 using namespace std;
 
-constexpr int random_rate = 6;// value from 1 to 8, the higher the value, the more streets will be generated
+constexpr int random_rate = 5;// value from 1 (very slow generation for larger maps!) to 8, the higher the value, the more streets will be generated
 
 void start_screen();
 void clear_screen();
