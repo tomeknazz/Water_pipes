@@ -48,13 +48,13 @@ void start_program(char** map) {
 	int enter;
 	int counting_cities;
 	create_empty_map(map, width, height);
-	const auto visited = new bool[col * row] { false };
+	bool* visited;
 	do {
 		counting_cities = 0;
 		create_empty_map(map, width, height);
 		city_map_generation(col, row, map);
 		print_map(map, width, height);
-
+		visited = new bool[col * row] { false };
 		dfs(0, 0, map, col, row, visited, -1, -1);
 		for (int i = 0; i < col * row; i++) {
 			if (visited[i] == 1)
@@ -95,14 +95,14 @@ void city_map_generation(const int n, const int m, char** map) {
 			}
 
 			if ((map_height % 4 == 0) && map_width < max_width && ((map_width % 6 == 0))) {
-				if (rand() % 9 < 8) {
+				if (rand() % 9 < 6) {
 					street(map, map_height, map_width, 1, 1);
 				}
 				else {
 					street(map, map_height, map_width, 1, 0);
 				}
 
-				if ((rand() % 9 < 8) && map_width != 0) {
+				if ((rand() % 9 < 6) && map_width != 0) {
 					street(map, map_height, map_width, 0, 1);
 				}
 				else if (map_width != 0) {
@@ -111,14 +111,14 @@ void city_map_generation(const int n, const int m, char** map) {
 			}
 
 			if ((map_width % 6 == 0) && (map_height % 4 == 0) && (map_height < max_height)) {
-				if (rand() % 9 < 8) {
+				if (rand() % 9 < 6) {
 					street(map, map_height, map_width, 2, 1);
 				}
 				else {
 					street(map, map_height, map_width, 2, 0);
 				}
 
-				if ((rand() % 9 < 8) && map_height != 0) {
+				if ((rand() % 9 < 6) && map_height != 0) {
 					street(map, map_height, map_width, 3, 1);
 				}
 				else if (map_height != 0) {
